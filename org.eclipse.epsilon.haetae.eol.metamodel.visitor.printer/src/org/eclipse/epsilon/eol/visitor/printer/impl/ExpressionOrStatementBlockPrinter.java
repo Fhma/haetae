@@ -23,7 +23,11 @@ public class ExpressionOrStatementBlockPrinter extends ExpressionOrStatementBloc
 			}
 		}
 		else if (expressionOrStatementBlock.getExpression() != null) {
+			// FIXED: fix whitespaces
+			// FIXED: in case of a single statement, the statement lack of ';' at the end
+			result += context.whitespace();
 			result += controller.visit(expressionOrStatementBlock.getExpression(), context);
+			result +=";";
 			result += context.newline();
 		}
 

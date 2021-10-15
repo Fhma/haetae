@@ -1,7 +1,15 @@
 package org.eclipse.epsilon.eol.visitor.printer.impl;
 
 import org.eclipse.epsilon.eol.metamodel.AnyType;
+import org.eclipse.epsilon.eol.metamodel.CollectionType;
+import org.eclipse.epsilon.eol.metamodel.InvalidType;
+import org.eclipse.epsilon.eol.metamodel.MapType;
+import org.eclipse.epsilon.eol.metamodel.ModelElementType;
+import org.eclipse.epsilon.eol.metamodel.ModelType;
+import org.eclipse.epsilon.eol.metamodel.NativeType;
 import org.eclipse.epsilon.eol.metamodel.OperationDefinition;
+import org.eclipse.epsilon.eol.metamodel.PrimitiveType;
+import org.eclipse.epsilon.eol.metamodel.PseudoType;
 import org.eclipse.epsilon.eol.metamodel.Type;
 import org.eclipse.epsilon.eol.metamodel.visitor.EolVisitorController;
 import org.eclipse.epsilon.eol.metamodel.visitor.OperationDefinitionVisitor;
@@ -17,13 +25,21 @@ public class OperationDefinitionPrinter extends OperationDefinitionVisitor<EOLPr
 		if(operationDefinition.getAnnotationBlock() != null)
 		{
 			result += controller.visit(operationDefinition.getAnnotationBlock(), context);
+			context.newline();
 		}
 		
-		result += "operation ";
+		result += "operation";
+		
+		// FIXED: remove the extra space after 'operation' keyword if there is no contextType
 		if(operationDefinition.getContextType() != null)
 		{
-			result += controller.visit(operationDefinition.getContextType(), context) + " ";
+			String context_type = "" + controller.visit(operationDefinition.getContextType(), context);
+			if(context_type.length() > 0)
+				result+=" "+ context_type + " ";
+			else
+				result+=" ";
 		}
+		
 		result += controller.visit(operationDefinition.getName(), context) + "(";
 		
 		if(operationDefinition.getParameters() != null && operationDefinition.getParameters().size() != 0)
@@ -31,7 +47,8 @@ public class OperationDefinitionPrinter extends OperationDefinitionVisitor<EOLPr
 			result += controller.visit(operationDefinition.getParameters().get(0), context);
 			for(int i = 1; i < operationDefinition.getParameters().size(); i++)
 			{
-				result += controller.visit(operationDefinition.getParameters().get(i), context);
+				//FIXED: include a comma ',' after each parameter in multiple parameters operation
+				result += ", "+controller.visit(operationDefinition.getParameters().get(i), context);
 			}
 			result += ")";
 		}
@@ -41,7 +58,7 @@ public class OperationDefinitionPrinter extends OperationDefinitionVisitor<EOLPr
 		if(operationDefinition.getReturnType() != null)
 		{
 			Type returnType = operationDefinition.getReturnType();
-			if (returnType instanceof AnyType) {
+			if (isTypeOfAnyType(returnType)) {
 				if (((AnyType)returnType).isDeclared()) {
 					result += " : ";
 				}
@@ -59,5 +76,13 @@ public class OperationDefinitionPrinter extends OperationDefinitionVisitor<EOLPr
 
 		return result;
 	}
-
+	
+	private boolean isTypeOfAnyType(Type type)
+	{
+		if(type instanceof MapType || type instanceof CollectionType  || type instanceof NativeType || type instanceof PrimitiveType)
+			return false;
+		if(type instanceof ModelElementType || type instanceof ModelType || type instanceof PseudoType || type instanceof InvalidType)
+			return false;
+		return true;
+	}
 }

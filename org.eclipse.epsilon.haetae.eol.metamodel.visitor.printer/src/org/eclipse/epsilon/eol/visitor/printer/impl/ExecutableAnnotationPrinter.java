@@ -14,5 +14,4 @@ public class ExecutableAnnotationPrinter extends ExecutableAnnotationStatementVi
 		String result = "$" + controller.visit(executableAnnotationStatement.getName(), context) + " " + controller.visit(executableAnnotationStatement.getExpression(), context);
 		return result;
 	}
-
 }

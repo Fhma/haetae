@@ -12,14 +12,11 @@ public class StringExpressionPrinter extends StringExpressionVisitor<EOLPrinterC
 			EOLPrinterContext context,
 			EolVisitorController<EOLPrinterContext, Object> controller) {
 		
-		
+		//TODO: ask Will about surrounding a string with single quotation 
 		String result = "\'" + stringExpression.getValue() + "\'";
-		
 		if (stringExpression.isInBrackets()) {
 			result = "(" + result + ")";
 		}
-		
 		return result;
 	}
-
 }

@@ -17,9 +17,10 @@ public class AnnotationBlockPrinter extends AnnotationBlockVisitor<EOLPrinterCon
 			for(Statement sa : annotationBlock.getStatements())
 			{
 				result += controller.visit(sa, context);
+				//FIXED: put a new line after each annotation statement
+				result+=context.newline();
 			}
 		}
 		return result;
 	}
-
 }
