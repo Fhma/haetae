@@ -1,5 +1,7 @@
 *.class
 
+.DS_Store
+
 .mtj.tmp/
 .metadata
 
